@@ -1,9 +1,10 @@
 import { useRef, useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthProvider";
+import { toast } from "react-toastify";
 
-import axios from '../api/axios';
-const LOGIN_URL = '/login';
+import axios from "../api/axios";
+const LOGIN_URL = "/login";
 
 const Login = () => {
   const ctx = useContext(AuthContext);
@@ -13,7 +14,6 @@ const Login = () => {
   const [user, setUser] = useState("");
   const [pwd, setPwd] = useState("");
   const [errMsg, setErrMsg] = useState("");
-  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     setErrMsg("");
@@ -23,32 +23,35 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(LOGIN_URL, 
-        JSON.stringify({
-          "email": user.toLowerCase(), 
-          "password": pwd,
-        }));
+      const response = await axios.post(LOGIN_URL, {
+        email: user.toLowerCase(),
+        password: pwd,
+      });
 
-      setUser("");
-      setPwd("");
-      setSuccess(true);
-      console.log(response);
-      // navigate("/dashboard", { replace: true });
+      const name = response?.data.data.username;
+      const role = response?.data.data.role;
+      const token = response?.data.token;
+
+      ctx.setAuth({name, role, token});
+      toast.success("Logged in successfully", {
+        position: "top-right",
+        autoClose: 2000,
+      });
+
+      navigate("/dashboard/user", { replace: true });
     } catch (err) {
-      if(!err?.response){
-        setErrMsg('No server response');
+      if (!err?.response) {
+        setErrMsg("No server response");
       } else if (err.response?.status === 404) {
-        setErrMsg(err.response?.data.message || 'Something wrong happened');
+        setErrMsg(err.response?.data.message || "Something wrong happened");
       } else {
-        setErrMsg('Login failed');
+        setErrMsg("Login failed");
       }
     }
-
-
   };
 
   return (
-    <section>
+    <section className="form-box">
       <p className={errMsg ? "errmsg" : "offscreen"}>{errMsg}</p>
       <h1>Sign in</h1>
       <form onSubmit={handleSubmit}>

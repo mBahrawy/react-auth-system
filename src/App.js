@@ -1,10 +1,13 @@
 import React, { Suspense } from "react";
 import { BrowserRouter as Router } from "react-router-dom";
-import Routes from "./routes";
+import Routes from "./Routes/routes";
 import "./App.css";
+import Nav from "./components/UI/Navbar/Nav";
 
 function App() {
   return (
+    <>
+    <Nav/>
     <main className="App">
       <Router>
         <Suspense fallback="loading">
@@ -12,6 +15,7 @@ function App() {
         </Suspense>
       </Router>
     </main>
+    </>
   );
 }
 

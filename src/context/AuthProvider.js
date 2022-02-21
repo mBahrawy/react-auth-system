@@ -1,14 +1,24 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useCallback } from "react";
 
 export const AuthContext = createContext({})
 
 export const AuthProvider = ({children}) => {
 
-    const [auth, setAuth] = useState({});
+    const [auth, setAuthState] = useState({});
+
+    const setAuth = useCallback((incomingAuth)=>{
+        setAuthState(incomingAuth)
+    },[]);
+
+
+    const logout = useCallback(()=>{
+        setAuthState({});
+    },[])
 
     const initContext = {
         auth,
-        setAuth
+        setAuth,
+        logout
     }
     
     return (
